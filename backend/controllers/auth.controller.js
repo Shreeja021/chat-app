@@ -8,9 +8,11 @@ export const signup =  async(req,res)=>
         const {fullName,username,password,confirmPassword,gender}=req.body;
         if(password !== confirmPassword)
         {
-            return res.status(400).json({error: "Password dont match"});
+            return res.status(400).json({error: "Password don't match"});
         }
+
     const user = await User.findOne({username})
+
     if(user)
     {
         return res.status(400).json({error:"Username already exists"})
@@ -40,6 +42,7 @@ export const signup =  async(req,res)=>
             generateTokenAndSetCookie(newUser._id,res);
             console.log("user" , newUser);
         await newUser.save();
+        
         res.status(201).json({
             _id: newUser._id,
             fullName : newUser.fullName,
@@ -66,7 +69,7 @@ export const login = async(req,res)=>{
         const user = await User.findOne({username});
         const isPasswordCorrect = await bcrypt.compare(password,user?.password || "");
         
-        if(!user || isPasswordCorrect)
+        if(!user || !isPasswordCorrect)
         {
             return res.status(400).json({error:"Invalid username or password"});
         }
@@ -91,7 +94,7 @@ export const login = async(req,res)=>{
 export const logout = (req,res)=>{
     try{
      res.cookie("jwt","",{maxAge:0});
-     res.status(200).json({error:"Logged out successfully"});
+     res.status(200).json({data:"Logged out successfully"});
     }
     catch(error)
     {
